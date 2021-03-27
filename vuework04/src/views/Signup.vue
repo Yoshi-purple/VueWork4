@@ -13,6 +13,7 @@
       <label for="password">パスワード </label>
       <input type="password" placeholder="Password" v-model="password" />
     </div>
+
     <div v-if="error">
       <p>{{ error }}</p>
     </div>
@@ -28,6 +29,7 @@
 <script>
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import { mapActions, mapState } from 'vuex';
 export default {
   name: 'Signup',
   data() {
@@ -38,19 +40,37 @@ export default {
       error: null,
     };
   },
+  computed: {
+    ...mapState(['user']),
+  },
 
   methods: {
+    ...mapActions(['addUser']),
     signUp() {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(this.email, this.password)
-        .then(
-          this.$router.push('/UsersView.vue'),
-          console.log(this.userName, this.email, this.password)
-        )
-        .catch((error) => {
-          this.error = error.message;
-        });
+      if (this.email === '' || this.password === '') {
+        console.log('karappo');
+        return;
+      } else {
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(this.email, this.password)
+          .then(
+            this.$store.commit('addUser', {
+              name: this.userName,
+              email: this.email,
+              password: this.password,
+            }),
+            //ページ推移のため、コメントアウトしておく
+            // this.$router.push('/UsersView.vue'),
+            console.log(this.$store.state.user)
+          )
+          .catch((error) => {
+            this.error = error.message;
+          });
+        this.userName = '';
+        this.email = '';
+        this.password = '';
+      }
     },
   },
 };

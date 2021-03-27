@@ -1,5 +1,9 @@
 <template>
-  <div>
-    <h1>ユーザ一覧</h1>
+  <div class="home">
+    <div>
+      <h3>ユーザ一覧</h3>
+    </div>
   </div>
 </template>
+
+<script></script>
