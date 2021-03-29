@@ -27,8 +27,6 @@
 <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
 
 <script>
-import firebase from 'firebase/app';
-import 'firebase/auth';
 import { mapActions, mapState } from 'vuex';
 export default {
   name: 'Signup',
@@ -45,28 +43,23 @@ export default {
   },
 
   methods: {
-    ...mapActions(['addUser']),
+    ...mapActions(['addUser', 'updateUser']),
     signUp() {
       if (this.email === '' || this.password === '') {
-        console.log('karappo');
-        return;
+        alert('input is null');
       } else {
-        firebase
-          .auth()
-          .createUserWithEmailAndPassword(this.email, this.password)
-          .then(
-            this.$store.commit('addUser', {
-              name: this.userName,
-              email: this.email,
-              password: this.password,
-            }),
-            //ページ推移のため、コメントアウトしておく
-            // this.$router.push('/UsersView.vue'),
-            console.log(this.$store.state.user)
-          )
-          .catch((error) => {
-            this.error = error.message;
-          });
+        this.$store.dispatch('addUser', {
+          name: this.userName,
+          email: this.email,
+          password: this.password,
+        });
+        this.$store.dispatch('updateUser', {
+          name: this.userName,
+          email: this.email,
+          password: this.password,
+        });
+
+        this.$router.push('/usersView'); //ページ推移
         this.userName = '';
         this.email = '';
         this.password = '';

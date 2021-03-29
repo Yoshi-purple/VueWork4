@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import store from '../store';
 const firebaseConfig = {
   apiKey: 'AIzaSyC7shKU7YhltXKuKZgFZmANxxKJ7bS8wM0',
   authDomain: 'PROJECT_ID.firebaseapp.com',
@@ -11,3 +12,7 @@ const firebaseConfig = {
   measurementId: 'G-MEASUREMENT_ID',
 };
 firebase.initializeApp (firebaseConfig);
+
+firebase.auth ().onAuthStateChanged (user => {
+  store.commit ('addUser', user);
+});
