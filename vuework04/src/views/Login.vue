@@ -9,24 +9,19 @@
       <label for="password">パスワード </label>
       <input type="text" v-model="password" placeholder="Password" />
     </div>
-    <ul v-for="user in user" :key="user.id">
-      <li>{{ user }}</li>
-    </ul>
     <div v-if="error">
       <p>{{ error }}</p>
     </div>
     <br />
     <div>
-      <button @click="login">ログイン</button>
+      <button @click="logIn">ログイン</button>
     </div>
     <router-link to="/" tag="a">新規登録はこちらから</router-link>
   </div>
 </template>
 
 <script>
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import { mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
 export default {
   data() {
     return {
@@ -36,28 +31,18 @@ export default {
       error: null,
     };
   },
-  computed: {
-    ...mapGetters(['user']),
-  },
 
   methods: {
-    login() {
+    ...mapActions(['logIn']),
+    logIn() {
       if (this.email === '' || this.password === '') {
-        console.log('karappo');
-        return;
+        alert('input is null');
       } else {
-        firebase
-          .auth()
-          .signInWithEmailAndPassword(this.email, this.password)
-          .then((user) => {
-            console.log(user);
-            //ページ推移のため、コメントアウトしておく
-            this.$router.push('/usersView');
-          })
-          .catch((error) => {
-            this.error = error.message;
-            alert(this.error);
-          });
+        this.$store.dispatch('logIn', {
+          email: this.email,
+          password: this.password,
+        });
+        this.$router.push('/usersView'); //ページ推移
         this.userName = '';
         this.email = '';
         this.password = '';
