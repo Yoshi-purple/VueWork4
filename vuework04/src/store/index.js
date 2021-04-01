@@ -11,30 +11,9 @@ export default new Vuex.Store ({
     error: null,
   },
   mutations: {
-    addUser (state, {email, password}) {
-      firebase
-        .auth ()
-        .createUserWithEmailAndPassword (email, password)
-        .then (alert ('Created user!!'))
-        .catch (error => {
-          this.error = error.message;
-        });
-    },
-    logIn (state, {email, password}) {
-      firebase
-        .auth ()
-        .signInWithEmailAndPassword (email, password)
-        .then (user => {
-          console.log (user);
-        })
-        .catch (error => {
-          this.error = error.message;
-          alert (this.error);
-        });
-    },
-    updateUser (state, {displayName, email, password}) {
+    addUser (state, {name, email, password}) {
       const user = {
-        displayName,
+        name,
         email,
         password,
       };
@@ -47,14 +26,33 @@ export default new Vuex.Store ({
     },
   },
   actions: {
-    addUser ({commit}, user) {
-      commit ('addUser', user);
+    addUser ({commit}, {name, email, password}) {
+      firebase
+        .auth ()
+        .createUserWithEmailAndPassword (email, password)
+        .then (users => {
+          console.log (users);
+          alert ('Created user!!'), commit ('addUser', {
+            name,
+            email,
+            password,
+          });
+        })
+        .catch (error => {
+          this.error = error.message;
+        });
     },
-    logIn ({commit}, user) {
-      commit ('logIn', user);
-    },
-    updateUser ({commit}, user) {
-      commit ('updateUser', user);
+    logIn ({commit}, {email, password}) {
+      firebase
+        .auth ()
+        .signInWithEmailAndPassword (email, password)
+        .then (user => {
+          console.log (user), commit ('logIn', {email, password});
+        })
+        .catch (error => {
+          this.error = error.message;
+          alert (this.error);
+        });
     },
   },
   modules: {},

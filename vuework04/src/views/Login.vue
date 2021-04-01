@@ -21,7 +21,6 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
 export default {
   data() {
     return {
@@ -33,7 +32,6 @@ export default {
   },
 
   methods: {
-    ...mapActions(['logIn']),
     logIn() {
       if (this.email === '' || this.password === '') {
         alert('input is null');

@@ -43,7 +43,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['addUser', 'updateUser']),
+    ...mapActions(['addUser']),
     signUp() {
       if (this.email === '' || this.password === '') {
         alert('input is null');
@@ -53,12 +53,6 @@ export default {
           email: this.email,
           password: this.password,
         });
-        this.$store.dispatch('updateUser', {
-          name: this.userName,
-          email: this.email,
-          password: this.password,
-        });
-
         this.$router.push('/usersView'); //ページ推移
         this.userName = '';
         this.email = '';
