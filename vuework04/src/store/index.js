@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import firebase from 'firebase/app';
+import 'firebase/auth';
 
 Vue.use (Vuex);
 
@@ -10,16 +11,7 @@ export default new Vuex.Store ({
     error: null,
   },
   mutations: {
-    addUser (state, {email, password}) {
-      firebase
-        .auth ()
-        .createUserWithEmailAndPassword (email, password)
-        .then (alert ('Created user!!'))
-        .catch (error => {
-          this.error = error.message;
-        });
-    },
-    updateUser (state, {name, email, password}) {
+    addUser (state, {name, email, password}) {
       const user = {
         name,
         email,
@@ -34,11 +26,33 @@ export default new Vuex.Store ({
     },
   },
   actions: {
-    addUser ({commit}, user) {
-      commit ('addUser', user);
+    addUser ({commit}, {name, email, password}) {
+      firebase
+        .auth ()
+        .createUserWithEmailAndPassword (email, password)
+        .then (users => {
+          console.log (users);
+          alert ('Created user!!'), commit ('addUser', {
+            name,
+            email,
+            password,
+          });
+        })
+        .catch (error => {
+          this.error = error.message;
+        });
     },
-    updateUser ({commit}, user) {
-      commit ('updateUser', user);
+    logIn ({commit}, {email, password}) {
+      firebase
+        .auth ()
+        .signInWithEmailAndPassword (email, password)
+        .then (user => {
+          console.log (user), commit ('logIn', {email, password});
+        })
+        .catch (error => {
+          this.error = error.message;
+          alert (this.error);
+        });
     },
   },
   modules: {},
