@@ -24,10 +24,9 @@
     <router-link to="/login" tag="a">ログインはこちらから</router-link>
   </div>
 </template>
-<script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+// import { mapState } from 'vuex';
 export default {
   name: 'Signup',
   data() {
@@ -39,11 +38,10 @@ export default {
     };
   },
   computed: {
-    ...mapState(['user']),
+    // ...mapState(['user']),
   },
 
   methods: {
-    ...mapActions(['addUser']),
     signUp() {
       if (this.email === '' || this.password === '') {
         alert('input is null');

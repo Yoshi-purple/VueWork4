@@ -1,5 +1,11 @@
 <template>
   <div class="home">
+    <br />
+    <div class="signedInUser">
+      <span class="userName">{{ userName }}さん、ようこそ！！</span>
+      <!-- <span class="userWallet">残高：{{ loginUser.wallet }}</span> -->
+      <!-- <span class="userWallet">残高：{{ uid }}</span> -->
+    </div>
     <div>
       <h3>ユーザ一覧</h3>
     </div>
@@ -12,11 +18,13 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 export default {
+  name: 'UsersView',
   computed: {
-    ...mapState(['users']),
+    ...mapGetters(['uid', 'userName', 'loginUser']),
   },
+  methods: {},
 };
 </script>
 

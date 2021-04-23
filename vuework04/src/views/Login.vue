@@ -7,7 +7,7 @@
     </div>
     <div class="form">
       <label for="password">パスワード </label>
-      <input type="text" v-model="password" placeholder="Password" />
+      <input type="password" v-model="password" placeholder="Password" />
     </div>
     <div v-if="error">
       <p>{{ error }}</p>
@@ -35,6 +35,7 @@ export default {
     logIn() {
       if (this.email === '' || this.password === '') {
         alert('input is null');
+        return;
       } else {
         this.$store.dispatch('logIn', {
           email: this.email,
