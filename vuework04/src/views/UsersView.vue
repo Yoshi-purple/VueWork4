@@ -2,9 +2,8 @@
   <div class="home">
     <br />
     <div class="signedInUser">
-      <span class="userName">{{ userName }}さん、ようこそ！！</span>
-      <!-- <span class="userWallet">残高：{{ loginUser.wallet }}</span> -->
-      <!-- <span class="userWallet">残高：{{ uid }}</span> -->
+      <span class="userName">{{ loginUser.name }}さん、ようこそ！！</span>
+      <span class="userWallet">残高：{{ loginUser.wallet }}</span>
     </div>
     <div>
       <h3>ユーザ一覧</h3>

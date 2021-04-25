@@ -9,7 +9,7 @@ Vue.use (Vuex);
 export default new Vuex.Store ({
   state: {
     users: [],
-    loginUser: null,
+    loginUser: {},
     error: null,
   },
   getters: {
@@ -46,7 +46,8 @@ export default new Vuex.Store ({
               firebase
                 .firestore ()
                 .collection ('users')
-                .add ({
+                .doc (email)
+                .set ({
                   name: name,
                   email: email,
                   wallet: 500,
@@ -57,11 +58,27 @@ export default new Vuex.Store ({
                 .catch (error => {
                   console.log (error);
                 });
+              firebase
+                .firestore ()
+                .collection ('users')
+                .doc (email)
+                .get ()
+                .then (docRef => {
+                  if (docRef.exists) {
+                    commit ('setLoginUser', docRef.data ());
+                  } else {
+                    console.log ('No such document!');
+                  }
+                });
               alert ('Created user!!'), commit ('addUser', {
                 name,
                 email,
                 password,
                 wallet: 500,
+              });
+              commit ('logIn', {
+                email,
+                password,
               });
             });
         })
@@ -78,6 +95,18 @@ export default new Vuex.Store ({
             email,
             password,
           });
+          firebase
+            .firestore ()
+            .collection ('users')
+            .doc (email)
+            .get ()
+            .then (docRef => {
+              if (docRef.exists) {
+                commit ('setLoginUser', docRef.data ());
+              } else {
+                console.log ('No such document!');
+              }
+            });
         })
         .catch (error => {
           this.error = error.message;
