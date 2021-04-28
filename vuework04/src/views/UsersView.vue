@@ -17,13 +17,35 @@
 </template>
 
 <script>
+import firebase from '../firebase/firebase.config';
+// import 'firebase/auth';
+import store from '../store/index';
 import { mapGetters } from 'vuex';
 export default {
   name: 'UsersView',
   computed: {
     ...mapGetters(['uid', 'userName', 'loginUser']),
   },
-  methods: {},
+  methods: {
+    changeLoginUser() {
+      //ログイン状態の確認
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          console.log(user);
+
+          // ログインしているユーザ情報をストアにコミット
+          store.dispatch('setLoginUser', user);
+
+          //現在ログインしているユーザの確認のため、コンソールに出力
+          console.log('  Name: ' + user.displayName);
+          console.log('  Email: ' + user.email);
+          console.log('  wallet: ' + user.wallet);
+        } else {
+          console.log('ログインしてください');
+        }
+      });
+    },
+  },
 };
 </script>
 

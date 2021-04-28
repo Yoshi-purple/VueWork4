@@ -39,7 +39,8 @@ export default new Vuex.Store ({
         .then (() => {
           firebase
             .auth ()
-            .currentUser.updateProfile ({
+            .currentUser ()
+            .updateProfile ({
               displayName: name,
             })
             .then (() => {
@@ -48,8 +49,8 @@ export default new Vuex.Store ({
                 .collection ('users')
                 .doc (email)
                 .set ({
-                  name: name,
-                  email: email,
+                  name,
+                  email,
                   wallet: 500,
                 })
                 .then (docRef => {
