@@ -26,7 +26,6 @@
 </template>
 
 <script>
-// import { mapState } from 'vuex';
 export default {
   name: 'Signup',
   data() {
@@ -37,14 +36,12 @@ export default {
       error: null,
     };
   },
-  computed: {
-    // ...mapState(['user']),
-  },
+  computed: {},
 
   methods: {
     signUp() {
       if (this.email === '' || this.password === '') {
-        alert('input is null');
+        alert('ユーザー情報を全て入力してください');
       } else {
         this.$store.dispatch('addUser', {
           name: this.userName,

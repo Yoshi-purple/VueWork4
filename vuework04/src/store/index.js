@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+// import router from './router';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
@@ -18,6 +19,7 @@ export default new Vuex.Store ({
     userName: state => (state.loginUser ? state.loginUser.displayName : ''),
     uid: state => (state.loginUser ? state.loginUser.uid : null),
   },
+
   mutations: {
     addUser (state, user) {
       state.users.push (user);
@@ -43,7 +45,8 @@ export default new Vuex.Store ({
             .updateProfile ({
               displayName: name,
             })
-            .then (() => {
+            .then (user => {
+              commit ('setLoginUser', user);
               firebase
                 .firestore ()
                 .collection ('users')
@@ -53,24 +56,24 @@ export default new Vuex.Store ({
                   email,
                   wallet: 500,
                 })
-                .then (docRef => {
-                  console.log (docRef.id);
-                })
+                .then (
+                  firebase
+                    .firestore ()
+                    .collection ('users')
+                    .doc (email)
+                    .get ()
+                    .then (docRef => {
+                      if (docRef.exists) {
+                        commit ('setLoginUser', docRef.data ());
+                      } else {
+                        console.log ('No such document!');
+                      }
+                    })
+                )
                 .catch (error => {
                   console.log (error);
                 });
-              firebase
-                .firestore ()
-                .collection ('users')
-                .doc (email)
-                .get ()
-                .then (docRef => {
-                  if (docRef.exists) {
-                    commit ('setLoginUser', docRef.data ());
-                  } else {
-                    console.log ('No such document!');
-                  }
-                });
+
               alert ('Created user!!'), commit ('addUser', {
                 name,
                 email,
@@ -91,11 +94,13 @@ export default new Vuex.Store ({
       firebase
         .auth ()
         .signInWithEmailAndPassword (email, password)
-        .then (() => {
+        .then (user => {
           commit ('logIn', {
             email,
             password,
           });
+
+          console.log (user);
           firebase
             .firestore ()
             .collection ('users')
@@ -114,8 +119,11 @@ export default new Vuex.Store ({
           alert (this.error);
         });
     },
-    setLoginUser ({commit}, user) {
-      commit ('setLoginUser', user);
+
+    logOut () {
+      firebase.auth ().signOut ().then (() => {
+        console.log ('ログアウトしました。');
+      });
     },
   },
   modules: {},
