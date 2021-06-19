@@ -12,8 +12,16 @@
     </div>
 
     <div>
-      <router-link tag="button" to="/">登録画面</router-link>
-      <router-link tag="button" to="/login">ログイン画面</router-link>
+      <router-link to="/">
+        <button>
+          登録画面
+        </button>
+      </router-link>
+      <router-link to="/logIn">
+        <button>
+          ログイン画面
+        </button>
+      </router-link>
     </div>
   </div>
 </template>

@@ -16,7 +16,11 @@
     <div>
       <button @click="logIn">ログイン</button>
     </div>
-    <router-link to="/" tag="a">新規登録はこちらから</router-link>
+    <router-link to="/">
+      <a>
+        新規登録はこちらから
+      </a>
+      </router-link>
   </div>
 </template>
 
@@ -34,14 +38,14 @@ export default {
   methods: {
     logIn() {
       if (this.email === '' || this.password === '') {
-        alert('input is null');
+        console.log('全ての項目を入力してください');
         return;
       } else {
         this.$store.dispatch('logIn', {
           email: this.email,
           password: this.password,
         });
-        this.$router.push('/usersView'); //ページ推移
+        this.$router.push('/dashboard'); //ページ推移
         this.userName = '';
         this.email = '';
         this.password = '';

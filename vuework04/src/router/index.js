@@ -2,8 +2,8 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import SignUp from '../views/Signup.vue';
 import Login from '../views/Login.vue';
-import UsersView from '../views/UsersView.vue';
-import firebase from 'firebase';
+import Dashboard from '../views/Dashboard.vue';
+import firebase from 'firebase/app';
 
 Vue.use (VueRouter);
 
@@ -19,9 +19,9 @@ const routes = [
     component: Login,
   },
   {
-    path: '/usersView',
-    name: 'UsersView',
-    component: UsersView,
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: Dashboard,
     meta: {requiresAuth: true},
   },
 ];
@@ -37,12 +37,11 @@ router.beforeEach ((to, from, next) => {
   if (requiresAuth) {
     // 認証状態を取得
     firebase.auth ().onAuthStateChanged (user => {
-      if (!user) {
+      if (to.name !== 'Login' && !user) {
         // 認証されていない場合、ログイン画面へ
         next ({name: 'Login'});
-        console.log ('ログインしてください');
       } else {
-        next ();
+        next();
       }
     });
   } else {
