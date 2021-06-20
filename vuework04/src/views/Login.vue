@@ -7,16 +7,17 @@
     </div>
     <div class="form">
       <label for="password">パスワード </label>
-      <input type="text" v-model="password" placeholder="Password" />
-    </div>
-    <div v-if="error">
-      <p>{{ error }}</p>
+      <input type="password" v-model="password" placeholder="Password" />
     </div>
     <br />
     <div>
       <button @click="logIn">ログイン</button>
     </div>
-    <router-link to="/" tag="a">新規登録はこちらから</router-link>
+    <router-link to="/">
+      <a>
+        新規登録はこちらから
+      </a>
+      </router-link>
   </div>
 </template>
 
@@ -24,23 +25,20 @@
 export default {
   data() {
     return {
-      userName: '',
       email: '',
       password: '',
-      error: null,
     };
   },
 
   methods: {
     logIn() {
       if (this.email === '' || this.password === '') {
-        alert('input is null');
+        return;
       } else {
         this.$store.dispatch('logIn', {
           email: this.email,
           password: this.password,
         });
-        this.$router.push('/usersView'); //ページ推移
         this.userName = '';
         this.email = '';
         this.password = '';

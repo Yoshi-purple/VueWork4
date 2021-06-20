@@ -21,13 +21,15 @@
     <div>
       <button @click="signUp">新規登録</button>
     </div>
-    <router-link to="/login" tag="a">ログインはこちらから</router-link>
+    <router-link to="/login">
+      <a>
+        ログインはこちらから
+      </a>
+    </router-link>
   </div>
 </template>
-<script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
 
 <script>
-import { mapActions, mapState } from 'vuex';
 export default {
   name: 'Signup',
   data() {
@@ -38,22 +40,19 @@ export default {
       error: null,
     };
   },
-  computed: {
-    ...mapState(['user']),
-  },
+  computed: {},
 
   methods: {
-    ...mapActions(['addUser']),
-    signUp() {
+    signUp () {
       if (this.email === '' || this.password === '') {
-        alert('input is null');
+        alert('ユーザー情報を全て入力してください');
       } else {
-        this.$store.dispatch('addUser', {
+        this.$store.dispatch ('addUser', {
           name: this.userName,
           email: this.email,
           password: this.password,
         });
-        this.$router.push('/usersView'); //ページ推移
+        this.$router.push ('/dashboard'); //ページ推移
         this.userName = '';
         this.email = '';
         this.password = '';
