@@ -112,7 +112,9 @@ export default new Vuex.Store({
     },
 
     logOut () {
-      firebase.auth().signOut().then(() => {
+      firebase.auth().signOut().then()
+      .catch(() => {
+        console.log('ログアウトに失敗しました')
       });
     },
   },

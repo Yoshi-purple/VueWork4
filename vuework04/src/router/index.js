@@ -22,7 +22,7 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard,
-    meta: {requiresAuth: true},
+    meta: { requiresAuth: true },
   },
 ];
 
@@ -39,7 +39,7 @@ router.beforeEach ((to, from, next) => {
     firebase.auth ().onAuthStateChanged (user => {
       if (to.name !== 'Login' && !user) {
         // 認証されていない場合、ログイン画面へ
-        next ({name: 'Login'});
+        next ({ name: 'Login' });
       } else {
         next();
       }

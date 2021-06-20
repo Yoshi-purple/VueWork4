@@ -9,9 +9,6 @@
       <label for="password">パスワード </label>
       <input type="password" v-model="password" placeholder="Password" />
     </div>
-    <div v-if="error">
-      <p>{{ error }}</p>
-    </div>
     <br />
     <div>
       <button @click="logIn">ログイン</button>
@@ -28,10 +25,8 @@
 export default {
   data() {
     return {
-      userName: '',
       email: '',
       password: '',
-      error: null,
     };
   },
 
