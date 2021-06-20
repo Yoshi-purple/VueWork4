@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import router from '../router';
 
 Vue.use (Vuex);
 
@@ -97,8 +98,8 @@ export default new Vuex.Store({
             .get ()
             .then (docRef => {
               if (docRef.exists) {
-                console.log (docRef.data());//後で消す
                 commit('setLoginUser', docRef.data());
+                router.push('/dashboard')
               } else {
                 console.log ('No such document!');
               }
@@ -112,7 +113,6 @@ export default new Vuex.Store({
 
     logOut () {
       firebase.auth().signOut().then(() => {
-        console.log ('ログアウトしました。');
       });
     },
   },

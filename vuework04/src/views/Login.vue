@@ -38,14 +38,12 @@ export default {
   methods: {
     logIn() {
       if (this.email === '' || this.password === '') {
-        console.log('全ての項目を入力してください');
         return;
       } else {
         this.$store.dispatch('logIn', {
           email: this.email,
           password: this.password,
         });
-        this.$router.push('/dashboard'); //ページ推移
         this.userName = '';
         this.email = '';
         this.password = '';
