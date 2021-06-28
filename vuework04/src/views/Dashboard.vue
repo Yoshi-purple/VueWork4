@@ -10,6 +10,17 @@
     <div>
       <h3>ユーザ一覧</h3>
     </div>
+    <div>
+      <h4>ユーザー名</h4>
+      <ul>
+        <li v-show="user.name !== loginUser.name" v-for="user in users" :key="user.id">
+          {{ user.name }}
+          <button @click="openModal(user.id)">walletを見る</button>
+          <button>送る</button>
+        </li>
+          <CheckWalletModal v-if="modal === true" @close="closeModal" :users="users"></CheckWalletModal>
+      </ul>
+    </div>
 
     <div>
       <router-link to="/">
@@ -28,23 +39,35 @@
 
 <script>
 import { mapGetters } from 'vuex';
-
+import CheckWalletModal from './CheckWalletModal.vue'
 export default {
-  name: 'UsersView',
+  components: {
+    CheckWalletModal,
+  },
+  data() {
+    return {
+      modal: false,
+    }
+  },
+  name: 'Dashboard',
   computed: {
-    ...mapGetters(['uid', 'userName', 'loginUser']),
+    ...mapGetters(['uid', 'userName', 'loginUser', 'users']),
   },
 
   methods: {
     logOut() {
       this.$store.dispatch('logOut');
     },
+    openModal() {
+      this.modal = true;
+    },
+    closeModal() {
+      this.modal = false
+    },
   },
+
 };
 </script>
 
 <style>
-li {
-  list-style: none;
-}
 </style>

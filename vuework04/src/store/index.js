@@ -20,8 +20,14 @@ export default new Vuex.Store({
     uid: state => (state.loginUser ? state.loginUser.uid : null),
   },
   mutations: {
-    addUser (state, user) {
-      state.users.push (user);
+    setUserSnapshot (state, userSnapshot) {
+      state.users.push({
+        name: userSnapshot.name,
+        wallet: userSnapshot.wallet,
+      });
+    },
+    deleteUserSnapshot(state) {
+      state.users.length = 0;
     },
     logIn ({email, password}) {
       email;
@@ -30,9 +36,11 @@ export default new Vuex.Store({
     setLoginUser (state, loginUser) {
       state.loginUser = loginUser;
     },
+
   },
   actions: {
-    addUser ({commit,dispatch}, {name, email, password, uid}) {
+    //ユーザーを新規追加する処理
+    addUser ({commit,dispatch}, { name, email, password }) {
       firebase
       .auth ()
       .createUserWithEmailAndPassword (email, password)
@@ -64,14 +72,7 @@ export default new Vuex.Store({
           .catch (error => {
             console.log (error);
           });
-
-          alert ('Created user!!'), commit ('addUser', {
-            name,
-            email,
-            uid,
-            password,
-            wallet: 500,
-          });
+          alert ('登録完了'),
           dispatch ('logIn', {
             email,
             password,
@@ -82,7 +83,8 @@ export default new Vuex.Store({
           this.error = error.message;
         });
     },
-    logIn ({commit}, {email, password}) {
+    //ログイン処理
+    logIn ({commit,dispatch}, {email, password}) {
       firebase
         .auth ()
         .signInWithEmailAndPassword (email, password)
@@ -99,6 +101,7 @@ export default new Vuex.Store({
             .then (docRef => {
               if (docRef.exists) {
                 commit('setLoginUser', docRef.data());
+                dispatch('getUserList')
                 router.push('/dashboard')
               } else {
                 console.log ('No such document!');
@@ -110,12 +113,27 @@ export default new Vuex.Store({
           alert (this.error);
         });
     },
-
-    logOut () {
-      firebase.auth().signOut().then()
+    //ログアウト処理
+    logOut ({commit}) {
+      firebase.auth().signOut().then(() => {
+        commit('deleteUserSnapshot')
+      })
       .catch(() => {
         console.log('ログアウトに失敗しました')
       });
+    },
+    //全てのユーザー情報取得
+    getUserList({ commit }) {
+      firebase.
+        firestore()
+        .collection('users')
+        .get()
+        .then(userSnapshot => {
+          userSnapshot.forEach(doc => {
+            // console.log(doc.data())
+            commit('setUserSnapshot', doc.data());
+          })
+        });
     },
   },
   modules: {},
