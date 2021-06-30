@@ -101,7 +101,8 @@ export default new Vuex.Store({
             .then (docRef => {
               if (docRef.exists) {
                 commit('setLoginUser', docRef.data());
-                dispatch('getUserList')
+                console.log(user)//後で消す
+                dispatch('getUserList', user.user.email)
                 router.push('/dashboard')
               } else {
                 console.log ('No such document!');
@@ -123,14 +124,15 @@ export default new Vuex.Store({
       });
     },
     //全てのユーザー情報取得
-    getUserList({ commit }) {
+    getUserList({ commit }, email) {
       firebase.
         firestore()
         .collection('users')
+        .where('email', '!=', email )
         .get()
         .then(userSnapshot => {
           userSnapshot.forEach(doc => {
-            // console.log(doc.data())
+            console.log(doc.data())
             commit('setUserSnapshot', doc.data());
           })
         });

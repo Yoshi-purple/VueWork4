@@ -1,8 +1,8 @@
   <template >
   <transition name="modal" appear >
     <div class="overlay" @click.self="$emit('close')" >
-      <div class="content" v-for="user of someUsers" :key="user.id">
-        {{ user.name }}さんの残高: {{ user.wallet }}
+      <div class="content">
+        {{ users[index].name }}さんの残高: {{ users[index].wallet }}
         <footer class="footer">
           <slot name="footer">
             <button @click="$emit('close')">閉じる</button>
@@ -14,11 +14,8 @@
 </template>
 <script>
 export default {
-  props: ["users"],
+  props:['users', 'index'],
   computed: {
-    someUsers() {
-      return this.users;
-    }
   },
   template: {
 

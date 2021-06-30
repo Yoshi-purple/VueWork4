@@ -13,12 +13,12 @@
     <div>
       <h4>ユーザー名</h4>
       <ul>
-        <li v-show="user.name !== loginUser.name" v-for="user in users" :key="user.id">
+        <li v-for="(user, index) in users" :key="index">
           {{ user.name }}
-          <button @click="openModal(user.id)">walletを見る</button>
+          <button @click="openModal(index)">walletを見る</button>
           <button>送る</button>
         </li>
-          <CheckWalletModal v-if="modal === true" @close="closeModal" :users="users"></CheckWalletModal>
+          <CheckWalletModal v-if="modal === true" @close="closeModal" :users="users" :index="index"></CheckWalletModal>
       </ul>
     </div>
 
@@ -47,6 +47,7 @@ export default {
   data() {
     return {
       modal: false,
+      index: null,
     }
   },
   name: 'Dashboard',
@@ -58,7 +59,8 @@ export default {
     logOut() {
       this.$store.dispatch('logOut');
     },
-    openModal() {
+    openModal(index) {
+      this.index = index;
       this.modal = true;
     },
     closeModal() {
