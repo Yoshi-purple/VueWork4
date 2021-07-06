@@ -15,10 +15,12 @@
       <ul>
         <li v-for="(user, index) in users" :key="index">
           {{ user.name }}
-          <button @click="openModal(index)">walletを見る</button>
-          <button>送る</button>
+          <button @click="openCheckModal(index)">walletを見る</button>
+          <button @click="openSendModal(index)">送る</button>
         </li>
-          <CheckWalletModal v-if="modal === true" @close="closeModal" :users="users" :index="index"></CheckWalletModal>
+          <CheckWalletModal v-if="checkModal === true" @close="closeModal" :users="users" :index="index"></CheckWalletModal>
+          <SendWalletModal v-if="sendModal === true" @close="closeModal" :users="users" :index="index">
+          </SendWalletModal>
       </ul>
     </div>
 
@@ -40,13 +42,16 @@
 <script>
 import { mapGetters } from 'vuex';
 import CheckWalletModal from './CheckWalletModal.vue'
+import SendWalletModal from './SendWalletModal.vue'
 export default {
   components: {
     CheckWalletModal,
+    SendWalletModal,
   },
   data() {
     return {
-      modal: false,
+      checkModal: false,
+      sendModal: false,
       index: null,
     }
   },
@@ -59,12 +64,17 @@ export default {
     logOut() {
       this.$store.dispatch('logOut');
     },
-    openModal(index) {
+    openCheckModal(index) {
       this.index = index;
-      this.modal = true;
+      this.checkModal = true;
+    },
+    openSendModal(index) {
+      this.index = index;
+      this.sendModal = true;
     },
     closeModal() {
-      this.modal = false
+      this.checkModal = false
+      this.sendModal = false
     },
   },
 

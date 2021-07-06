@@ -7,24 +7,33 @@ import router from '../router';
 
 Vue.use (Vuex);
 
+
 export default new Vuex.Store({
   state: {
     users: [],
     loginUser: {},
+    targetUser:{},
     error: null,
+    uid: '',
   },
   getters: {
     users: state => state.users,
     loginUser: state => state.loginUser,
+    targetUser: state => state.targetUser,
     userName: state => (state.loginUser ? state.loginUser.displayName : ''),
-    uid: state => (state.loginUser ? state.loginUser.uid : null),
+    uid: state => state.uid,
   },
   mutations: {
     setUserSnapshot (state, userSnapshot) {
       state.users.push({
-        name: userSnapshot.name,
-        wallet: userSnapshot.wallet,
+        name: userSnapshot.data.name,
+        wallet: userSnapshot.data.wallet,
+        email: userSnapshot.data.email,
+        uid: userSnapshot.id
       });
+    },
+    setTargetUser(state, targetUser) {
+      state.targetUser = targetUser;
     },
     deleteUserSnapshot(state) {
       state.users.length = 0;
@@ -36,7 +45,9 @@ export default new Vuex.Store({
     setLoginUser (state, loginUser) {
       state.loginUser = loginUser;
     },
-
+    setUid(state, uid) {
+      state.uid = uid
+    }
   },
   actions: {
     //ユーザーを新規追加する処理
@@ -44,11 +55,11 @@ export default new Vuex.Store({
       firebase
       .auth ()
       .createUserWithEmailAndPassword (email, password)
-      .then((user) => {
+      .then((addedUser) => {
         firebase
           .firestore ()
           .collection ('users')
-          .doc (user.user.uid)
+          .doc (addedUser.user.uid)
           .set({
             name,
             email,
@@ -58,7 +69,7 @@ export default new Vuex.Store({
             firebase
               .firestore ()
               .collection ('users')
-              .doc (user.uid)
+              .doc (addedUser.uid)
               .get ()
               .then (docRef => {
                 if (docRef.exists) {
@@ -84,11 +95,12 @@ export default new Vuex.Store({
         });
     },
     //ログイン処理
-    logIn ({commit,dispatch}, {email, password}) {
+    logIn({ commit, dispatch }, { email, password }) {
+      commit('deleteUserSnapshot');//ユーザ一覧の重複を避けるため削除
       firebase
         .auth ()
         .signInWithEmailAndPassword (email, password)
-        .then((user) => {
+        .then((logInUser) => {
           commit ('logIn', {
             email,
             password,
@@ -96,13 +108,13 @@ export default new Vuex.Store({
           firebase
             .firestore ()
             .collection ('users')
-            .doc (user.user.uid)
+            .doc (logInUser.user.uid)
             .get ()
             .then (docRef => {
               if (docRef.exists) {
                 commit('setLoginUser', docRef.data());
-                console.log(user)//後で消す
-                dispatch('getUserList', user.user.email)
+                dispatch('getUserList', logInUser.user.email);
+                commit('setUid',logInUser.user.uid)
                 router.push('/dashboard')
               } else {
                 console.log ('No such document!');
@@ -123,7 +135,7 @@ export default new Vuex.Store({
         console.log('ログアウトに失敗しました')
       });
     },
-    //全てのユーザー情報取得
+    //ログインユーザー以外のユーザー情報取得
     getUserList({ commit }, email) {
       firebase.
         firestore()
@@ -132,10 +144,38 @@ export default new Vuex.Store({
         .get()
         .then(userSnapshot => {
           userSnapshot.forEach(doc => {
-            console.log(doc.data())
-            commit('setUserSnapshot', doc.data());
+            const docData = {
+              data: doc.data(),
+              id: doc.id
+            }
+            commit('setUserSnapshot', docData);
           })
         });
+    },
+    //ログインユーザーのWALLETの書き換え
+    updateWallet({ getters }) {
+      const doSendUser = getters.loginUser;
+      firebase.firestore()
+        .collection('users')
+        // .where('email', '==', doSendUser.email)
+        .doc(getters.uid)
+        .update({ wallet: doSendUser.wallet })
+        .then()
+        .catch(err => {
+        console.log(err)
+      })
+    },
+    //渡す対象のユーザーのWALLETの書き換え
+    updateTargetWallet({ getters }) {
+      const receivingUser = getters.targetUser
+      firebase.firestore()
+        .collection('users')
+        .doc(receivingUser.uid)
+        .update({ wallet: receivingUser.wallet })
+        .then()
+        .catch(err => {
+        console.log(err)
+      })
     },
   },
   modules: {},
