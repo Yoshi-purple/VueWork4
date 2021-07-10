@@ -152,30 +152,38 @@ export default new Vuex.Store({
           })
         });
     },
-    //ログインユーザーのWALLETの書き換え
+    //渡す対象とログインユーザーのWALLETの書き換え
     updateWallet({ getters }) {
+      const receivingUser = getters.targetUser;
       const doSendUser = getters.loginUser;
-      firebase.firestore()
-        .collection('users')
-        // .where('email', '==', doSendUser.email)
-        .doc(getters.uid)
-        .update({ wallet: doSendUser.wallet })
-        .then()
-        .catch(err => {
-        console.log(err)
+      const receivingDocRef = firebase.firestore ().collection ('users').doc (receivingUser.uid);
+      firebase.firestore().runTransaction(transaction => {
+        return transaction.get(receivingDocRef).then((receivingUser) => {
+          if (!receivingUser.exists) {
+            throw "receivingUser does not exist!";
+          }
       })
-    },
-    //渡す対象のユーザーのWALLETの書き換え
-    updateTargetWallet({ getters }) {
-      const receivingUser = getters.targetUser
-      firebase.firestore()
-        .collection('users')
-        .doc(receivingUser.uid)
-        .update({ wallet: receivingUser.wallet })
-        .then()
-        .catch(err => {
-        console.log(err)
-      })
+      }).then(
+        firebase.firestore()
+          .collection('users')
+          .doc(receivingUser.uid)
+          .update({ wallet: receivingUser.wallet })
+          .then(
+            firebase.firestore()
+            .collection('users')
+            .doc(getters.uid)
+            .update({ wallet: doSendUser.wallet })
+            .then()
+            .catch(err => {
+              console.log(err)
+            })
+          )
+          .catch(err => {
+            console.log(err)
+          })
+      ).catch(err => {
+        console.log(err);
+        })
     },
   },
   modules: {},

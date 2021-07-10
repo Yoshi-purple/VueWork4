@@ -31,7 +31,9 @@ return {
   methods: {
     doSend(targetUser) {
       if(this.sentWallet === '') {
-        alert('金額を入力してください')
+        console.log('金額を入力してください')
+      } else if(this.sentWallet > this.loginUser.wallet) {
+        console.log('残高が不足しています')
       } else {
         this.$store.commit('setLoginUser', {
           name: this.loginUser.name,
@@ -39,9 +41,8 @@ return {
           wallet: this.loginUser.wallet - this.sentWallet,
         });
         targetUser.wallet = Number(targetUser.wallet) + Number(this.sentWallet);
-        this.$store.commit('setTargetUser',targetUser);
+        this.$store.commit('setTargetUser', targetUser);
         this.$store.dispatch('updateWallet');
-        this.$store.dispatch('updateTargetWallet');
         this.sentWallet = '';
         this.$emit('close');
       }
